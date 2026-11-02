@@ -1862,7 +1862,7 @@ document.addEventListener('keydown',e=>{if(e.key=='Escape'&&$('#si-dz'))mdlRoot(
 /* GDrive: вход через Google, список Диска, открытие документов как сценариев */
 const GDS='https://www.googleapis.com/auth/drive',GDOCX='application/vnd.openxmlformats-officedocument.wordprocessingml.document',GDOC='application/vnd.google-apps.document',GFOLD='application/vnd.google-apps.folder';
 const GD={tok:'',exp:0,path:[{id:'root',name:'Мой диск'}],tab:'my',files:[],busy:false,err:'',q:'',sort:'date',loaded:false};
-const APPVER='02.11.2026 · сборка 10';
+const APPVER='02.11.2026 · сборка 11';
 try{const t=JSON.parse(localStorage.getItem('gd_tok')||'null');if(t&&t.e>Date.now()+30000){GD.tok=t.t;GD.exp=t.e}}catch{}
 const gdOK=()=>!!GD.tok&&GD.exp>Date.now()+15000;
 function gdLoadGis(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.onload=()=>res();sc.onerror=()=>rej(new Error('Не удалось загрузить вход Google: проверьте интернет и доступ к accounts.google.com'));document.head.appendChild(sc)})}
@@ -2808,7 +2808,7 @@ document.addEventListener('dblclick',e=>{const t=e.target.closest&&e.target.clos
  if(gcOn()){await 0;GCORE=new GCore(GC.id);S.dir=new GDir(GCORE,'');if(gdOK())await gcConnect(true);else{gcStat();setTimeout(()=>{gcAuto();if(!gdOK())toast('Google Drive: нужно войти. Нажмите на статус внизу слева.')},1500)}}
  else{const h=await idbGet('dir');
  if(h){try{if(await h.queryPermission({mode:'readwrite'})==='granted'){S.dir=h;await loadDir()}else S.pending=h}catch{S.pending=h}}}
- S.cur=null;if(!location.hash&&ADM.start&&ADM.start!='home')S.view=ADM.start;hashRestore();render();admAll();status(S.dir?'Готово к работе':'');setTimeout(()=>{try{gcAuto()}catch{}},1500)})();
+ S.cur=null;if(!location.hash&&ADM.start&&ADM.start!='home')S.view=ADM.start;hashRestore();render();admAll();status(S.dir?'Готово к работе':'');setTimeout(()=>{try{gcAuto();if(gdOK()&&!(GU&&GU.p))gcUser()}catch{}},1500)})();
 /* ===== трекер: книги, слова, заметки ===== */
 let TR={books:[],words:[]},TRS={tab:'books',flt:'all',book:null,bt:'words',q:'',sort:'alpha',imp:false,wedit:null,nedit:null},TRD=null;
 function trNorm(){if(!TR||typeof TR!='object')TR={};if(!Array.isArray(TR.books))TR.books=[];if(!Array.isArray(TR.words))TR.words=[];TR.books.forEach(b=>{if(!Array.isArray(b.notes))b.notes=[];b.pages=+b.pages||0;b.read=+b.read||0})}
@@ -3820,7 +3820,7 @@ function tbAct(k){
  if(k=='theme'){applyTheme(document.documentElement.dataset.theme=='dark'?'light':'dark');render();return}
  if(k=='settings'||k=='tracker'){const b=document.querySelector('.nv[data-v='+k+']');if(b)b.click()}}
 document.addEventListener('click',e=>{const q=e.target.closest&&e.target.closest.bind(e.target);if(!q)return;const tg=q('[data-tb]');
- if(tg){const m=$('#tbm-'+tg.dataset.tb),was=m&&!m.hidden;tbClose();if(m&&!was){if(tg.dataset.tb=='av')try{tbRender()}catch{}m.hidden=false;tg.classList.add('on')}return}
+ if(tg){const m=$('#tbm-'+tg.dataset.tb),was=m&&!m.hidden;tbClose();if(m&&!was){if(tg.dataset.tb=='av'){try{tbRender()}catch{}if(gdOK()&&!(GU&&GU.p))gcUser()}m.hidden=false;tg.classList.add('on')}return}
  const a=q('[data-tba]');if(a){tbClose();return tbAct(a.dataset.tba)}
  if(!q('.tbm'))tbClose()});
 document.addEventListener('keydown',e=>{if(e.key=='Escape')tbClose()});
