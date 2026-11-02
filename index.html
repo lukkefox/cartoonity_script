@@ -1321,6 +1321,7 @@ html[data-sheet=light] .rsx{color:#8a8f9c}html[data-sheet=light] .rsx:hover{back
 .gdbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.gdcr{flex:1;min-width:160px}.gdwait{padding:30px 0;text-align:center}
 .gdtb tr.gdr{cursor:pointer}.gdtb tr.gdr.off{opacity:.5;cursor:default}.gdtag{font-size:12px;padding:2px 8px;border-radius:10px;background:rgba(80,200,120,.18);color:#4ccf86}.gdtag.nw{background:rgba(255,200,61,.2);color:#e6b020}
 .gdt button{white-space:nowrap;flex:none}.gdcr .crumb,.gdcr b{font-size:16px}.gdbar select{min-width:170px}
+.gdact{white-space:nowrap}.gdact .btn{height:32px;padding:0 12px;font-size:13px;margin-right:6px}.gdtb tr.gdr.on td{background:var(--hov)}.gdtb tr.gdr{user-select:none}
 </style>
 
 
@@ -1883,7 +1884,7 @@ function gdListHTML(){if(GD.busy)return '<p class="mut gdwait">Загружаю�
  if(!a.length)return '<p class="mut gdwait">'+(GD.files.length?'Ничего не найдено.':'Здесь пусто.')+'</p>';
  return '<table class="tbl gdtb"><thead><tr><th>Название</th><th>Состояние</th><th>Изменён</th><th></th></tr></thead><tbody>'+a.map(f=>{const fo=f.mimeType==GFOLD,dc=gdIsDoc(f),lk=dc?S.scripts.find(x=>x.gdoc==f.id):null;
   let st='';if(lk)st=lk.gmod==f.modifiedTime?'<span class="gdtag ok">в приложении</span>':'<span class="gdtag nw">в Google новее</span>';
-  return '<tr class="tr gdr'+(dc||fo?'':' off')+'" '+(fo?'data-gd-open="'+f.id+'"':dc?'data-gd-doc="'+f.id+'"':'')+'><td><div class="nm"><span class="'+(fo?'fi':'si')+'">'+(fo?FI:SI)+'</span><b>'+esc(f.name)+'</b></div></td><td>'+(fo?'<span class="mut">Папка</span>':dc?st||'<span class="mut">документ</span>':'<span class="mut">другой файл</span>')+'</td><td>'+gdFmt(f.modifiedTime)+'</td><td class="ta">'+(f.webViewLink&&!fo?'<button class="x" data-gd-ext="'+f.id+'" title="Открыть в Google (новая вкладка)">↗</button>':'')+'</td></tr>'}).join('')+'</tbody></table>'}
+  return '<tr class="tr gdr'+(dc||fo?'':' off')+'" '+(fo?'data-gd-open="'+f.id+'"':dc?'data-gd-doc="'+f.id+'"':'')+'><td><div class="nm"><span class="'+(fo?'fi':'si')+'">'+(fo?FI:SI)+'</span><b>'+esc(f.name)+'</b></div></td><td>'+(fo?'<span class="mut">Папка</span>':dc?st||'<span class="mut">документ</span>':'<span class="mut">другой файл</span>')+'</td><td>'+gdFmt(f.modifiedTime)+'</td><td class="ta gdact">'+(dc?'<button class="btn ghost gdimp" data-gd-imp="'+f.id+'" title="Загрузить документ в приложение как сценарий">'+(lk?(lk.gmod==f.modifiedTime?'Открыть в приложении':'Обновить из Google'):'Импортировать')+'</button>':'')+(f.webViewLink&&!fo?'<button class="x" data-gd-ext="'+f.id+'" title="Открыть в Google (новая вкладка)">↗</button>':'')+'</td></tr>'}).join('')+'</tbody></table>'}
 async function gdFetchDoc(f){const u=f.mimeType==GDOC?'https://www.googleapis.com/drive/v3/files/'+f.id+'/export?mimeType='+gdQ(GDOCX):'https://www.googleapis.com/drive/v3/files/'+f.id+'?alt=media&supportsAllDrives=true';const buf=await(await gdApi(u)).arrayBuffer();return docSplit(await docxToHtml(buf))}
 async function gdOpenDoc(id){const f=GD.files.find(x=>x.id==id);if(!f)return;let lk=S.scripts.find(x=>x.gdoc==id);
  try{if(lk&&lk.gmod==f.modifiedTime){S.cur=lk;S.view='scripts';S.folder=gi(lk);render();return}
@@ -1911,7 +1912,9 @@ document.addEventListener('click',e=>{if(S.view!='gdrive')return;const t=e.targe
  const cr=t.closest('[data-gd-crumb]');if(cr){GD.path=GD.path.slice(0,+cr.dataset.gdCrumb+1);GD.q='';return gdLoad()}
  const ex=t.closest('[data-gd-ext]');if(ex){const f=GD.files.find(x=>x.id==ex.dataset.gdExt);if(f&&f.webViewLink)window.open(f.webViewLink,'_blank','noopener');return}
  const fo=t.closest('[data-gd-open]');if(fo){const f=GD.files.find(x=>x.id==fo.dataset.gdOpen);if(f){GD.path.push({id:f.id,name:f.name});GD.q='';gdLoad()}return}
- const dc=t.closest('[data-gd-doc]');if(dc)return gdOpenDoc(dc.dataset.gdDoc)});
+ const im=t.closest('[data-gd-imp]');if(im)return gdOpenDoc(im.dataset.gdImp);
+ const dc=t.closest('[data-gd-doc]');if(dc){document.querySelectorAll('#gd-list tr.on').forEach(r=>r.classList.remove('on'));dc.classList.add('on')}});
+document.addEventListener('dblclick',e=>{if(S.view!='gdrive')return;const dc=e.target.closest&&e.target.closest('[data-gd-doc]');if(!dc||e.target.closest('button'))return;const f=GD.files.find(x=>x.id==dc.dataset.gdDoc);if(f&&f.webViewLink)window.open(f.webViewLink,'_blank','noopener')});
 document.addEventListener('input',e=>{if(e.target.id=='gd-q'){GD.q=e.target.value;const l=$('#gd-list');if(l)l.innerHTML=gdListHTML()}});
 document.addEventListener('change',e=>{if(e.target.id=='gd-sort'){GD.sort=e.target.value;const l=$('#gd-list');if(l)l.innerHTML=gdListHTML()}});
 document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.id=='gd-cid'){const b=document.querySelector('[data-gd-cid]');if(b)b.click()}});
