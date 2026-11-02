@@ -1322,6 +1322,8 @@ html[data-sheet=light] .rsx{color:#8a8f9c}html[data-sheet=light] .rsx:hover{back
 .gdtb tr.gdr{cursor:pointer}.gdtb tr.gdr.off{opacity:.5;cursor:default}.gdtag{font-size:12px;padding:2px 8px;border-radius:10px;background:rgba(80,200,120,.18);color:#4ccf86}.gdtag.nw{background:rgba(255,200,61,.2);color:#e6b020}
 .gdt button{white-space:nowrap;flex:none}.gdcr .crumb,.gdcr b{font-size:16px}.gdbar select{min-width:170px}
 .gdact{white-space:nowrap}.gdact .btn{height:32px;padding:0 12px;font-size:13px;margin-right:6px}.gdtb tr.gdr.on td{background:var(--hov)}.gdtb tr.gdr{user-select:none}
+.gdver{font-size:11.5px;margin-top:30px;text-align:center;opacity:.7}
+.fd.gcl{cursor:pointer;color:#e8a23b;text-decoration:underline}
 </style>
 
 
@@ -1406,12 +1408,14 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&timer){cle
 /* папка */
 async function loadDir(){{const miss=new Set(),rj=async n=>{try{const f=await S.dir.getFileHandle(n);return JSON.parse(await(await f.getFile()).text())}catch{miss.add(n);return null}};const a=await rj('_categories.json');if(Array.isArray(a)&&a.length){CATS=a;ensureTL()}const st=await rj('_settings.json');if(st&&typeof st=='object'){Object.assign(SET,st);S.sort=SET.sort||'date';rposApply()}const fl=await rj('_folders.json');if(Array.isArray(fl))FOLDERS=fl;const bp=await rj('_boards.json');if(bp&&Array.isArray(bp.boards)){BD=bp;bdNorm()}const wp=await rj('_watch.json');if(wp&&Array.isArray(wp.items)){WT=wp;wtNorm()}wtMig();const aa=await rj('_admin.json');if(aa&&typeof aa=='object')admLoad(aa);const tt=await rj('_trash.json');if(Array.isArray(tt)){TRB=tt;trPurge()}const ii=await rj('_ideas.json');if(Array.isArray(ii))IDEAS=ii;const bb=await rj('_bookmarks.json');if(bb&&Array.isArray(bb.cats)&&Array.isArray(bb.items)){BM=bb;bmNorm();try{ytSide()}catch{}}{const hh=await rj('_home.json');if(hh&&typeof hh=='object'){HM=hh;hmNorm()}const tt=await rj('_tracker.json');if(tt&&typeof tt=='object'){TR=tt;trNorm()}}const rr=await rj('_releases.json');if(rr&&Array.isArray(rr.items)){RELS=rr.items;if(rr.lists)RL=rr.lists;rlNorm()}normCats();catStyle();{const all={'_categories.json':CATS,'_settings.json':SET,'_folders.json':FOLDERS,'_boards.json':BD,'_watch.json':WT,'_admin.json':ADM,'_ideas.json':IDEAS,'_bookmarks.json':BM,'_home.json':HM,'_tracker.json':TR,'_releases.json':{items:RELS,lists:RL},'_trash.json':TRB};for(const n in all)if(miss.has(n)){try{const f=await S.dir.getFileHandle(n,{create:true}),w=await f.createWritable();await w.write(JSON.stringify(all[n]));await w.close()}catch{}}}}
  const m=new Map(S.scripts.map(s=>[s.id,s]));
- for await(const e of S.dir.values()){if(e.kind!=='file'||!e.name.endsWith('.json'))continue;try{const s=JSON.parse(await(await e.getFile()).text());if(s&&s.id){s.file=e.name;m.set(s.id,s)}}catch{}}
+ for await(const e of S.dir.values()){if(e.kind!=='file'||!e.name.endsWith('.json'))continue;try{const s=JSON.parse(await(await e.getFile()).text());if(s&&s.id){s.file=e.name;const o=m.get(s.id);if(o&&o.file&&o.file!==e.name){const lose=(o.updated||0)>(s.updated||0)?e.name:o.file;try{await S.dir.removeEntry(lose)}catch{}if(lose===e.name)continue}m.set(s.id,s)}}catch{}}
  S.scripts=[...m.values()].sort((a,b)=>b.updated-a.updated);
+ if(typeof GDir!='undefined'&&S.dir instanceof GDir&&localStorage.getItem('gd_synced'))S.scripts=S.scripts.filter(x=>x.file||S.dir.c.pend.has(fname(x)));
  for(const s of S.scripts)if(!s.file){try{await writeFile(s)}catch{}}
  mirror()}
 async function pickDir(){if(!window.showDirectoryPicker){alert('Сохранение в папку работает в Chrome и Edge.');return}
  try{S.dir=await showDirectoryPicker({mode:'readwrite'})}catch{return}
+ if(gcOn()){GC=null;GCORE=null;try{localStorage.removeItem(GCK);localStorage.removeItem(GCP)}catch{}}
  S.pending=null;await idbSet('dir',S.dir);await loadDir();S.cur=null;render()}
 async function grant(){const h=S.pending;if(await h.requestPermission({mode:'readwrite'})==='granted'){S.dir=h;S.pending=null;await loadDir();S.cur=null;render()}}
 
@@ -1511,7 +1515,7 @@ function editorHTML(){const s=S.cur;
  const mk=[['disc','• Точка'],['circle','○ Кружок'],['square','■ Квадрат'],['–','– Тире'],['➤','➤ Стрелка'],['✓','✓ Галочка'],['decimal','1. Цифры']].map(a=>'<option value="'+a[0]+'">'+a[1]+'</option>').join('');
  return '<div class="edtop"><div class="hd"><button class="btn ghost" data-act="back">← Все сценарии</button>'+posterBtn(s)+'<input class="title" id="ti" value="'+esc(s.title)+'" placeholder="Название сценария"><div class="stat" id="stat"></div><span id="bdlk">'+bdLinkHTML(s)+'</span></div>'+tbHTML()+'<div class="rulbar"><div class="hrul" id="hrul"></div></div></div><div class="edscroll"><div class="vrul" id="vrul"></div><div class="work"><div class="sheetcol"><div id="ed" contenteditable="true" spellcheck="true" style="line-height:'+(s.lh||1.15)+'">'+s.html+'</div></div><div class="rp">'+rpHTML()+'</div></div></div>'}
 
-function bannerHTML(){if(S.dir)return '';
+function bannerHTML(){if(S.dir){if(gcOn()&&!gdOK())return '<div class="bar warn"><span>Google Drive: нужно войти, чтобы данные синхронизировались. Пока всё сохраняется в браузере.</span><button class="btn" data-gc="login">Войти</button></div>';return ''}
  return '<div class="bar warn"><span>'+(S.pending?'Нужно подтвердить доступ к папке «'+esc(S.pending.name)+'».':'Папка для сохранения не выбрана: сценарии пока хранятся только в браузере.')+'</span><button class="btn" data-act="'+(S.pending?'grant':'pick')+'">'+(S.pending?'Подтвердить доступ':'Выбрать папку')+'</button></div>'}
 const cardHTML=(s,rm)=>'<div class="it" data-id="'+s.id+'"><div><b>'+esc(s.title)+'</b><small>'+new Date(s.updated).toLocaleDateString('ru')+'</small></div>'+(rm?'<button class="x" data-rm="'+s.id+'" title="Удалить">✕</button>':'')+'</div>';
 
@@ -1525,7 +1529,7 @@ function render(){sqApply();
  document.querySelectorAll('.nv[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==S.view||(b.dataset.v=='settings'&&S.view=='admin')));
  {const sn=$('#snav');if(sn){sn.classList.toggle('open',S.view=='settings'||S.view=='admin');sn.querySelectorAll('[data-st]').forEach(b=>b.classList.toggle('on',b.dataset.st==(S.view=='admin'?'interface':(S.setTab||'general'))))}}
  {const d=new Date(),t=d.toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'});$('#dt').textContent=t}
- $('#fd').textContent=S.dir?'Папка: '+S.dir.name:'Папка не выбрана';
+ $('#fd').textContent=S.dir?'Папка: '+S.dir.name:'Папка не выбрана';if(gcOn())gcStat();
  if(S.view!='settings'&&S.view!='admin')S.lastView=S.view;
  const m=$('#main'),v=(S.view=='settings'||S.view=='admin')?(S.lastView&&S.lastView!='settings'&&S.lastView!='admin'?S.lastView:'home'):S.view,soon=t=>'<section class="card"><h3>'+t[0]+'</h3><p class="mut">'+t[1]+'</p></section>';
  m.classList.toggle('trkm',v=='tracker');m.dataset.trt=SET.trTheme||'emerald';
@@ -1851,16 +1855,17 @@ document.addEventListener('keydown',e=>{if(e.key=='Escape'&&$('#si-dz'))mdlRoot(
 /* GDrive: вход через Google, список Диска, открытие документов как сценариев */
 const GDS='https://www.googleapis.com/auth/drive',GDOCX='application/vnd.openxmlformats-officedocument.wordprocessingml.document',GDOC='application/vnd.google-apps.document',GFOLD='application/vnd.google-apps.folder';
 const GD={tok:'',exp:0,path:[{id:'root',name:'Мой диск'}],tab:'my',files:[],busy:false,err:'',q:'',sort:'date',loaded:false};
-try{const t=JSON.parse(sessionStorage.getItem('gd_tok')||'null');if(t&&t.e>Date.now()+30000){GD.tok=t.t;GD.exp=t.e}}catch{}
+const APPVER='02.11.2026 · сборка 4 (облако)';
+try{const t=JSON.parse(localStorage.getItem('gd_tok')||'null');if(t&&t.e>Date.now()+30000){GD.tok=t.t;GD.exp=t.e}}catch{}
 const gdOK=()=>!!GD.tok&&GD.exp>Date.now()+15000;
 function gdLoadGis(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.onload=()=>res();sc.onerror=()=>rej(new Error('Не удалось загрузить вход Google: проверьте интернет и доступ к accounts.google.com'));document.head.appendChild(sc)})}
-async function gdLogin(){if(!SET.gdcid)return;
+async function gdLogin(silent){if(!SET.gdcid)return;
  if(location.protocol=='file:'){GD.err='Вход через Google работает, только если приложение открыто по адресу https://… , а не как файл с компьютера. Инструкция ниже.';return gdPaint()}
- try{await gdLoadGis();const tc=google.accounts.oauth2.initTokenClient({client_id:SET.gdcid,scope:GDS,callback:r=>{if(r.error){GD.err='Вход не выполнен: '+(r.error_description||r.error);return gdPaint()}GD.tok=r.access_token;GD.exp=Date.now()+(+r.expires_in||3600)*1000;GD.err='';try{sessionStorage.setItem('gd_tok',JSON.stringify({t:GD.tok,e:GD.exp}))}catch{}gdLoad()},error_callback:e=>{GD.err='Окно входа закрыто или заблокировано браузером ('+((e&&e.type)||'ошибка')+')';gdPaint()}});tc.requestAccessToken({prompt:''})}catch(e){GD.err=e.message;gdPaint()}}
-function gdLogout(){try{if(GD.tok&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(GD.tok,()=>{})}catch{}GD.tok='';GD.exp=0;GD.files=[];GD.path=[{id:'root',name:'Мой диск'}];GD.tab='my';GD.loaded=false;try{sessionStorage.removeItem('gd_tok')}catch{}gdPaint()}
+ try{await gdLoadGis();const tc=google.accounts.oauth2.initTokenClient({client_id:SET.gdcid,scope:GDS,callback:r=>{if(r.error){GD.err='Вход не выполнен: '+(r.error_description||r.error);return gdPaint()}GD.tok=r.access_token;GD.exp=Date.now()+(+r.expires_in||3600)*1000;GD.err='';try{localStorage.setItem('gd_tok',JSON.stringify({t:GD.tok,e:GD.exp}))}catch{}if(S.view=='gdrive')gdLoad();try{gcOnToken()}catch{}gcStat();if(!localStorage.getItem('gd_hint'))gdApi('https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)').then(x=>x.json()).then(j=>{const m=j&&j.user&&j.user.emailAddress;if(m)try{localStorage.setItem('gd_hint',m)}catch{}}).catch(()=>{})},error_callback:e=>{if(silent)return;GD.err='Окно входа закрыто или заблокировано браузером ('+((e&&e.type)||'ошибка')+')';gdPaint()}});const hint=localStorage.getItem('gd_hint')||'';tc.requestAccessToken(hint?{prompt:'',hint}:{prompt:''})}catch(e){GD.err=e.message;gdPaint()}}
+function gdLogout(){try{if(GD.tok&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(GD.tok,()=>{})}catch{}GD.tok='';GD.exp=0;GD.files=[];GD.path=[{id:'root',name:'Мой диск'}];GD.tab='my';GD.loaded=false;try{localStorage.removeItem('gd_tok');localStorage.removeItem('gd_hint')}catch{}gdPaint()}
 async function gdApi(url,opt){opt=opt||{};if(!gdOK()){GD.tok='';gdPaint();throw new Error('Нужно войти в Google заново')}
  const r=await fetch(url,{...opt,headers:{Authorization:'Bearer '+GD.tok,...(opt.headers||{})}});
- if(r.status==401){GD.tok='';GD.exp=0;try{sessionStorage.removeItem('gd_tok')}catch{}gdPaint();throw new Error('Вход в Google истёк, войдите заново')}
+ if(r.status==401){GD.tok='';GD.exp=0;try{localStorage.removeItem('gd_tok')}catch{}gdPaint();throw new Error('Вход в Google истёк, войдите заново')}
  if(!r.ok){let m='';try{m=((await r.json()).error||{}).message||''}catch{}throw new Error('Google Drive: '+r.status+(m?' · '+m:''))}return r}
 const gdQ=encodeURIComponent;
 async function gdLoad(){if(!gdOK()){gdPaint();return}GD.busy=true;GD.err='';gdPaint();
@@ -1868,9 +1873,98 @@ async function gdLoad(){if(!gdOK()){gdPaint();return}GD.busy=true;GD.err='';gdPa
   do{const u='https://www.googleapis.com/drive/v3/files?q='+gdQ(q)+'&fields='+gdQ('nextPageToken,files(id,name,mimeType,modifiedTime,webViewLink)')+'&pageSize=200&supportsAllDrives=true&includeItemsFromAllDrives=true'+(pt?'&pageToken='+gdQ(pt):'');const j=await(await gdApi(u)).json();all=all.concat(j.files||[]);pt=j.nextPageToken||''}while(pt&&all.length<3000);
   GD.files=all;GD.loaded=true}catch(e){GD.err=e.message;GD.files=[]}GD.busy=false;gdPaint()}
 const gdIsDoc=f=>f.mimeType==GDOC||f.mimeType==GDOCX,gdFmt=t=>t?new Date(t).toLocaleDateString('ru',{day:'numeric',month:'short',year:'numeric'}):'';
+/* ===== облачная папка данных (Google Drive вместо локальной папки) ===== */
+const GAPI='https://www.googleapis.com/drive/v3/',GCK='gd_store',GCP='gd_pend',GCN='Cartoonity Data';
+let GC=null,GCORE=null;try{GC=JSON.parse(localStorage.getItem(GCK)||'null')}catch{}
+const gcOn=()=>!!(GC&&GC.id);
+const gcMime=k=>({json:'application/json',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',gif:'image/gif'})[(k.split('.').pop()||'').toLowerCase()]||'application/octet-stream';
+const gcNF=()=>{const x=new Error('NotFound');x.name='NotFoundError';return x};
+class GCore{
+ constructor(root){this.root=root;this.ids={'':root};this.ls={};this.pend=new Map();this.cache=new Map();this.known={};this.timer=0;this.ptimer=0;this.busy=false;this.err='';this.loaded=false;this.loading=false;this.last=0;
+  try{const p=JSON.parse(localStorage.getItem(GCP)||'{}');for(const k in p){const v=p[k];this.pend.set(k,v===null?{x:1}:{s:v,b:new Blob([v])})}}catch{}}
+ persist(){clearTimeout(this.ptimer);this.ptimer=setTimeout(()=>{const o={};this.pend.forEach((pe,k)=>{if(pe.x)o[k]=null;else if(pe.s!=null)o[k]=pe.s});try{if(Object.keys(o).length)localStorage.setItem(GCP,JSON.stringify(o));else localStorage.removeItem(GCP)}catch{}},400)}
+ sched(){clearTimeout(this.timer);this.timer=setTimeout(()=>this.flush(),2500);gcStat()}
+ put(k,parts){const s=parts.every(x=>typeof x=='string')?parts.join(''):null;const b=new Blob(parts,{type:gcMime(k)});this.pend.set(k,{b,s});this.persist();this.sched()}
+ del(k){this.pend.set(k,{x:1});this.cache.delete(k);this.persist();this.sched()}
+ async list(p,force){if(!force&&this.ls[p])return this.ls[p];const id=await this.folder(p,false);const m=new Map();let pt='';
+  do{const u=GAPI+'files?q='+gdQ("'"+id+"' in parents and trashed=false")+'&fields='+gdQ('nextPageToken,files(id,name,mimeType,modifiedTime,size)')+'&pageSize=1000&supportsAllDrives=true&includeItemsFromAllDrives=true'+(pt?'&pageToken='+gdQ(pt):'');const j=await(await gdApi(u)).json();(j.files||[]).forEach(f=>{if(!m.has(f.name))m.set(f.name,f)});pt=j.nextPageToken||''}while(pt);
+  this.ls[p]=m;return m}
+ async folder(p,create){if(this.ids[p])return this.ids[p];const i=p.lastIndexOf('/'),par=i<0?'':p.slice(0,i),n=p.slice(i+1);const pid=await this.folder(par,create);const m=await this.list(par);const e=m.get(n);
+  if(e&&e.mimeType==GFOLD)return this.ids[p]=e.id;if(!create)throw gcNF();
+  const j=await(await gdApi(GAPI+'files?supportsAllDrives=true&fields=id,name,mimeType,modifiedTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,mimeType:GFOLD,parents:[pid]})})).json();m.set(n,j);return this.ids[p]=j.id}
+ async dl(e){return await(await gdApi(GAPI+'files/'+e.id+'?alt=media&supportsAllDrives=true')).blob()}
+ async read(p,n){const k=p?p+'/'+n:n,pe=this.pend.get(k);if(pe){if(pe.x)throw gcNF();return pe.b}
+  const e=(await this.list(p)).get(n);if(!e)throw gcNF();const c=this.cache.get(k);if(c&&c.mt==e.modifiedTime)return c.b;
+  const b=await this.dl(e);this.cache.set(k,{mt:e.modifiedTime,b});this.known[k]=e.modifiedTime;return b}
+ async prefetch(p){const m=await this.list(p,true);const jobs=[...m.values()].filter(e=>e.mimeType!=GFOLD&&/\.json$/i.test(e.name)&&!this.pend.has((p?p+'/':'')+e.name));let i=0;
+  await Promise.all(Array.from({length:6},async()=>{while(i<jobs.length){const e=jobs[i++];try{await this.read(p,e.name)}catch{}}}))}
+ async upload(dirId,name,blob,e){const ct=blob.type||gcMime(name);let r;
+  if(e){r=await gdApi('https://www.googleapis.com/upload/drive/v3/files/'+e.id+'?uploadType=media&supportsAllDrives=true&fields=id,name,mimeType,modifiedTime',{method:'PATCH',headers:{'Content-Type':ct},body:blob})}
+  else{const b='gcb'+Math.random().toString(36).slice(2),body=new Blob(['--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name,parents:[dirId]})+'\r\n--'+b+'\r\nContent-Type: '+ct+'\r\n\r\n',blob,'\r\n--'+b+'--']);
+   r=await gdApi('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true&fields=id,name,mimeType,modifiedTime',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body})}
+  return await r.json()}
+ async flush(){clearTimeout(this.timer);if(this.busy)return;if(!this.pend.size){gcStat();return}
+  if(!gdOK()){gcStat();return}
+  this.busy=true;this.err='';gcStat();const fr=new Set();
+  try{for(let g=0;g<2000;g++){const it=this.pend.entries().next();if(it.done)break;const k=it.value[0],pe=it.value[1],i=k.lastIndexOf('/'),p=i<0?'':k.slice(0,i),n=k.slice(i+1);
+    let dirId;try{dirId=await this.folder(p,!pe.x)}catch(e){if(e.name=='NotFoundError'){this.pend.delete(k);continue}throw e}
+    if(!fr.has(p)){await this.list(p,true);fr.add(p)}const m=this.ls[p],e=m.get(n);
+    if(pe.x){if(e){await gdApi(GAPI+'files/'+e.id+'?supportsAllDrives=true',{method:'DELETE'});m.delete(n)}delete this.known[k];if(this.pend.get(k)===pe)this.pend.delete(k);continue}
+    if(e&&/\.json$/i.test(n)&&e.modifiedTime!==this.known[k]){const ob=await this.dl(e);const rt=await ob.text();
+     if(pe.s==null||rt!==pe.s){const cid=await this.folder('_conflicts',true);const st=new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');await this.upload(cid,n.replace(/\.json$/i,'')+' ('+st+').json',ob);try{toast('«'+n+'» был изменён на другом устройстве. Прежняя версия сохранена в папке _conflicts на Диске.')}catch{}}}
+    const j=await this.upload(dirId,n,pe.b,e);m.set(n,j);this.known[k]=j.modifiedTime;this.cache.set(k,{mt:j.modifiedTime,b:pe.b});if(this.pend.get(k)===pe)this.pend.delete(k)}
+   this.last=Date.now()}
+  catch(e){this.err=(e&&e.message)||'ошибка';if(gdOK())setTimeout(()=>this.flush(),15000)}
+  this.busy=false;this.persist();gcStat();if(this.pend.size&&!this.err&&gdOK())this.sched()}
+}
+class GFile{constructor(d,n){this.d=d;this.name=n;this.kind='file'}
+ async getFile(){const b=await this.d.c.read(this.d.p,this.name);return new File([b],this.name,{lastModified:Date.now()})}
+ async createWritable(){const ch=[],d=this.d,n=this.name;return{write:async x=>{ch.push(x&&x.type==='write'?x.data:x)},close:async()=>{d.c.put(d.key(n),ch)}}}}
+class GDir{constructor(c,p){this.c=c;this.p=p;this.kind='directory';this.name=p?p.split('/').pop():((GC&&GC.name)||GCN)}
+ key(n){return this.p?this.p+'/'+n:n}
+ async getFileHandle(n,o){const pe=this.c.pend.get(this.key(n));if(pe&&!pe.x)return new GFile(this,n);if(o&&o.create)return new GFile(this,n);
+  if(!pe&&(await this.c.list(this.p)).has(n))return new GFile(this,n);throw gcNF()}
+ async getDirectoryHandle(n,o){const k=this.key(n),pre=k+'/';if(o&&o.create)return new GDir(this.c,k);
+  for(const q of this.c.pend.keys())if(q.startsWith(pre))return new GDir(this.c,k);
+  const e=(await this.c.list(this.p)).get(n);if(e&&e.mimeType==GFOLD)return new GDir(this.c,k);throw gcNF()}
+ async removeEntry(n){this.c.del(this.key(n))}
+ async*values(){await this.c.prefetch(this.p);const seen=new Set();for(const [n,e] of this.c.ls[this.p]){const pe=this.c.pend.get(this.key(n));if(pe&&pe.x)continue;seen.add(n);yield e.mimeType==GFOLD?new GDir(this.c,this.key(n)):new GFile(this,n)}
+  const pre=this.p?this.p+'/':'';for(const [k,pe] of this.c.pend){if(pe.x||!k.startsWith(pre))continue;const r=k.slice(pre.length);if(r.includes('/')||seen.has(r))continue;yield new GFile(this,r)}}}
+function gcLabel(){const c=GCORE;if(!c)return'';if(c.loading)return '☁ Загружаю из Drive…';if(!gdOK())return '☁ Нужен вход в Google'+(c.pend.size?' · не сохранено: '+c.pend.size:'');if(c.err&&c.pend.size)return '☁ Не сохранено ('+c.pend.size+'): '+c.err;if(c.busy)return '☁ Сохраняю в Drive…';if(c.pend.size)return '☁ Ждёт сохранения: '+c.pend.size;return '☁ Drive'+(c.last?' · сохранено '+new Date(c.last).toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'}):' · на связи')}
+function gcStat(){const e=document.getElementById('fd');if(!e||!GCORE)return;e.textContent=gcLabel();const need=!gdOK();e.classList.toggle('gcl',need);if(need)e.setAttribute('data-gc','login');else e.removeAttribute('data-gc');e.title=need?'Нажмите, чтобы войти в Google':'Данные хранятся в папке «'+((GC&&GC.name)||GCN)+'» на вашем Google Диске'}
+function gcRemap(){if(S.cur){S.cur=S.scripts.find(x=>x.id==S.cur.id)||null}}
+async function gcConnect(quiet){if(!gcOn()||!gdOK())return;if(!GCORE){GCORE=new GCore(GC.id);S.dir=new GDir(GCORE,'')}const c=GCORE;if(c.loading)return;
+ c.loading=true;gcStat();
+ try{await c.flush();if(c.pend.size){c.loading=false;gcStat();return}
+  if(!c.loaded){await c.prefetch('');await loadDir();c.loaded=true;try{localStorage.setItem('gd_synced','1')}catch{}}}
+ catch(e){c.loading=false;c.err=(e&&e.message)||'ошибка';gcStat();try{toast('Не удалось загрузить данные из Drive: '+c.err)}catch{}return}
+ c.loading=false;gcStat();gcRemap();if(!quiet&&!(S.view=='scripts'&&S.cur))render()}
+async function gcReload(){if(!gcOn()||!GCORE)return;if(!gdOK()){gdLogin();return}const c=GCORE;toast('Синхронизирую с Drive…');await c.flush();if(c.pend.size){toast('Не все изменения отправлены: '+(c.err||'повторю позже'));return}
+ c.loading=true;gcStat();try{await c.prefetch('');await loadDir()}catch(e){toast('Ошибка загрузки: '+e.message)}c.loading=false;gcStat();gcRemap();if(!(S.view=='scripts'&&S.cur))render();toast('Синхронизировано с Drive')}
+async function gcEnable(){if(!SET.gdcid){toast('Сначала подключите Google в разделе GDrive (Client ID)');return}
+ if(!gdOK()){GD.enableAfter=true;toast('Войдите в Google…');return gdLogin()}
+ GD.enableAfter=false;toast('Подключаю Google Drive…');
+ try{const q="name='"+GCN+"' and mimeType='"+GFOLD+"' and 'root' in parents and trashed=false";const j=await(await gdApi(GAPI+'files?q='+gdQ(q)+'&fields=files(id,name)&pageSize=10')).json();let f=(j.files||[])[0],fresh=false;
+  if(f){const ch=await(await gdApi(GAPI+'files?q='+gdQ("'"+f.id+"' in parents and trashed=false")+'&fields=files(id)&pageSize=1')).json();
+   if((ch.files||[]).length&&!confirm('На вашем Диске уже есть папка «'+GCN+'» с данными (скорее всего, с другого компьютера).\n\nОК — подключить её: данные из неё загрузятся сюда, а то, чего в ней нет, добавится из этого браузера.\nОтмена — ничего не менять.'))return}
+  else{f=await(await gdApi(GAPI+'files?fields=id,name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:GCN,mimeType:GFOLD,parents:['root']})})).json();fresh=true}
+  const old=S.dir&&!(S.dir instanceof GDir)?S.dir:null;
+  GC={id:f.id,name:GCN};try{localStorage.setItem(GCK,JSON.stringify(GC));localStorage.removeItem(GCP);localStorage.removeItem('gd_synced')}catch{}
+  GCORE=new GCore(f.id);S.dir=new GDir(GCORE,'');
+  if(old){try{const sd=await old.getDirectoryHandle('Shots');for await(const e of sd.values())if(e.kind=='file'){const fl=await e.getFile();GCORE.put('Shots/'+e.name,[fl])}}catch{}}
+  GCORE.loading=true;gcStat();await GCORE.prefetch('');await loadDir();GCORE.loaded=true;GCORE.loading=false;try{localStorage.setItem('gd_synced','1')}catch{}
+  await GCORE.flush();S.cur=null;render();toast(fresh?'Готово: данные загружены в папку «'+GCN+'» на Диске':'Готово: подключена папка «'+GCN+'»')}
+ catch(e){toast('Не удалось подключить Drive: '+e.message)}}
+function gcOff(){if(!confirm('Отключить хранение в Google Drive на этом устройстве?\n\nДанные на Диске останутся. Приложение вернётся к локальной папке (её нужно будет подтвердить или выбрать заново).'))return;try{localStorage.removeItem(GCK);localStorage.removeItem(GCP);localStorage.removeItem('gd_synced')}catch{}location.reload()}
+function gcOnToken(){if(GD.enableAfter)gcEnable();else if(gcOn())gcConnect()}
+let gcAutoT=0;function gcAuto(){if(!gcOn()||gdOK()||!SET.gdcid||location.protocol=='file:'||Date.now()-gcAutoT<60000)return;gcAutoT=Date.now();gdLogin(true)}
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-gc]');if(!t)return;const k=t.dataset.gc;
+ if(k=='login')gdLogin();else if(k=='on')gcEnable();else if(k=='off')gcOff();else if(k=='sync')gcReload();else if(k=='open'&&GC)window.open('https://drive.google.com/drive/folders/'+GC.id,'_blank','noopener')});
+window.addEventListener('beforeunload',e=>{if(GCORE&&GCORE.pend.size){e.preventDefault();e.returnValue=''}});
+document.addEventListener('visibilitychange',()=>{if(!GCORE)return;if(document.hidden){if(GCORE.pend.size&&gdOK())GCORE.flush()}else{GCORE.hid=GCORE.hid||0;gcAuto();gcStat()}});
 const GDGUIDE='<ol class="gdg"><li>Откройте <b>console.cloud.google.com</b>, создайте проект (любое имя, например «Cartoonity»).</li><li>«APIs &amp; Services» → «Library» → найдите <b>Google Drive API</b> → «Enable».</li><li>«OAuth consent screen» (или «Google Auth Platform»): тип <b>External</b>, укажите название приложения и свою почту. В разделе <b>Audience / Test users</b> добавьте свой Google-аккаунт.</li><li>«Credentials» → «Create credentials» → <b>OAuth client ID</b> → тип <b>Web application</b>. В <b>Authorized JavaScript origins</b> добавьте адрес, где открывается приложение (например https://ваше-имя.github.io).</li><li>Скопируйте <b>Client ID</b> (заканчивается на .apps.googleusercontent.com) и вставьте выше.</li></ol>';
-function gdHTML(){return '<div class="pane gdp"><div class="rlh"><h1>GDrive</h1><div class="lact" id="gd-act"></div></div><div id="gdc"></div></div>'}
-function gdMount(){gdPaint();if(gdOK()&&!GD.loaded&&!GD.busy)gdLoad()}
+function gdHTML(){return '<div class="pane gdp"><div class="rlh"><h1>GDrive</h1><div class="lact" id="gd-act"></div></div><div id="gdc"></div><p class="mut gdver">Версия приложения: '+APPVER+'</p></div>'}
+function gdMount(){gdPaint();if(gdOK()&&!GD.loaded&&!GD.busy)gdLoad();else if(!gdOK()&&SET.gdcid&&location.protocol!='file:'&&localStorage.getItem('gd_hint')&&!GD.auto){GD.auto=true;gdLogin(true)}}
 function gdPaint(){const c=document.getElementById('gdc');if(!c)return;const act=document.getElementById('gd-act');
  if(!SET.gdcid){if(act)act.innerHTML='';c.innerHTML='<div class="gdmid"><div class="gdlogo">'+icSvg('gdrive',44)+'</div><h2>Подключение Google Диска</h2><p class="mut">Один раз вставьте Client ID из Google Cloud: он нужен, чтобы приложение могло просить у вас вход в Google. Ваши файлы остаются у вас на Диске.</p><div class="gdcid"><input id="gd-cid" placeholder="123456789-abc….apps.googleusercontent.com" autocomplete="off"><button class="btn" data-gd-cid>Сохранить</button></div>'+(GD.err?'<p class="gderr">'+esc(GD.err)+'</p>':'')+'<details class="gdd" open><summary>Как получить Client ID</summary>'+GDGUIDE+'</details></div>';return}
  if(!gdOK()){if(act)act.innerHTML='';c.innerHTML='<div class="gdmid"><div class="gdlogo">'+icSvg('gdrive',44)+'</div><h2>Войдите в Google</h2><p class="mut">Войдите в свой Google-аккаунт, и здесь появятся папки и документы вашего Диска. Документы можно открывать как сценарии прямо из этого списка.</p><button class="btn" data-gd-login>Войти через Google</button>'+(GD.err?'<p class="gderr">'+esc(GD.err)+'</p>':'')+'<p class="mut gdsm"><button class="gdl" data-gd-cidedit>Изменить Client ID</button></p>'+(location.protocol=='file:'?'<details class="gdd"><summary>Как настроить</summary>'+GDGUIDE+'</details>':'')+'</div>';return}
@@ -2140,7 +2234,7 @@ function stmPaint(){const on=S.view=='settings'||S.view=='admin';let w=document.
 document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;if(t.closest('[data-stclose]')||t.id=='stm')stmClose()});
 document.addEventListener('keydown',e=>{if(e.key=='Escape'&&document.getElementById('stm')&&!document.querySelector('.dlg,.modal,#ngpop'))stmClose()});
 function settingsHTML(){const sel=(id,v,o)=>'<select id="'+id+'">'+o.map(a=>'<option value="'+a[0]+'"'+(a[0]==v?' selected':'')+'>'+a[1]+'</option>').join('')+'</select>';
- const all='<div class="pane st"><h2>Настройки</h2>'+bannerHTML()+GRP('Общие настройки','#8b8f98')+secO('start','Запуск')+srow('Страница при запуске','Откроется при входе в приложение.',sel('ad-start',ADM.start,ADM.nav.filter(n=>!n.url).map(n=>[n.id,admLabel(n)])))+secC+secO('appear','Оформление')+appearRows()+secC+secO('store','Хранение')+srow('Папка с данными',S.dir?'Сейчас: '+esc(S.dir.name)+'. Рядом лежат служебные файлы _categories.json, _folders.json, _settings.json. Выбирайте вложенную папку (например, внутри Google Drive), а не «Документы» целиком: Chrome такие папки не разрешает.':'Не выбрана. Сценарии пока хранятся только в браузере.','<button class="btn" data-act="pick">'+(S.dir?'Выбрать другую':'Выбрать папку')+'</button>')+
+ const all='<div class="pane st"><h2>Настройки</h2>'+bannerHTML()+GRP('Общие настройки','#8b8f98')+secO('start','Запуск')+srow('Страница при запуске','Откроется при входе в приложение.',sel('ad-start',ADM.start,ADM.nav.filter(n=>!n.url).map(n=>[n.id,admLabel(n)])))+secC+secO('appear','Оформление')+appearRows()+secC+secO('store','Хранение')+srow('Google Drive (облако)',gcOn()?'Данные хранятся в папке «'+esc((GC&&GC.name)||GCN)+'» на вашем Диске, поэтому приложением можно пользоваться с любого компьютера. Состояние: '+esc(gcLabel().replace('☁ ',''))+'.':'Хранить доски, главную, релизы, закладки и сценарии в папке на вашем Google Диске. Нужен вход в Google (раздел GDrive).',gcOn()?'<button class="btn" data-gc="sync">Синхронизировать</button> <button class="btn ghost" data-gc="open">Открыть на Диске</button> <button class="btn ghost" data-gc="off">Отключить</button>':'<button class="btn" data-gc="on">Хранить в Google Drive</button>')+srow('Папка с данными',gcOn()?'Сейчас используется Google Drive; локальная папка не подключена.':S.dir?'Сейчас: '+esc(S.dir.name)+'. Рядом лежат служебные файлы _categories.json, _folders.json, _settings.json. Выбирайте вложенную папку (например, внутри Google Drive), а не «Документы» целиком: Chrome такие папки не разрешает.':'Не выбрана. Сценарии пока хранятся только в браузере.','<button class="btn" data-act="pick">'+(S.dir?'Выбрать другую':'Выбрать папку')+'</button>')+
  secC+secO('tbl','Ссылки верхней панели')+[['video','Добавить YouTube видео','Ссылка, которая откроется по пункту «Создать → Добавить YouTube видео». Лучше всего скопировать адрес окна загрузки из YouTube Studio.'],['tkvideo','Добавить TikTok','Ссылка для «Создать → Добавить TikTok» (окно загрузки в TikTok Studio).'],['post','Добавить запись','Ссылка для «Создать → Добавить запись» (публикация в сообществе канала).'],['ytchan','Канал YouTube','Пункт меню аватара. Если пусто, берётся адрес первого YouTube-канала из закладок.'],['tkchan','Канал TikTok','Пункт меню аватара.'],['ytstudio','Творческая студия YouTube','Пункт меню аватара.'],['tkstudio','Творческая студия TikTok','Пункт меню аватара.']].map(r=>srow(r[1],r[2],'<input id="st-lnk-'+r[0]+'" placeholder="https://…" autocomplete="off" value="'+esc(SL()[r[0]]||'')+'" style="width:320px;max-width:42vw">')).join('')+'<div class="srow"><div class="sl"><b>Свои пункты меню «Создать»</b><small>Например, Instagram: название и ссылка. Пункт появится в конце меню «Создать». Без названия или ссылки пункт не показывается.</small></div></div>'+(SET.cmenu||[]).map(c=>'<div class="srow mk"><div class="mkl"><input data-cm="'+c.id+'" data-cmf="name" maxlength="30" placeholder="Название, например Instagram" value="'+esc(c.name||'')+'" style="max-width:220px"><input data-cm="'+c.id+'" data-cmf="url" placeholder="https://…" value="'+esc(c.url||'')+'" style="flex:1;min-width:0"></div><button class="x" data-cmdel="'+c.id+'" title="Убрать">✕</button></div>').join('')+'<div class="srow mk"><button class="btn ghost" data-cmadd="1">＋ Добавить пункт</button></div>'+secC+GRP('Настройки сценариев','#3b8cff')+secO('scr','Сценарии')+srow('Сортировка по умолчанию','Применяется к папкам и сценариям. Её можно менять и прямо в списке.',sel('st-sort',SET.sort,[['date','По дате изменения'],['name','По имени']]))+
  secC+secO('res','Исследование')+srow('Расположение исследования','Для новых сценариев. У каждого сценария выбранное в редакторе положение запоминается отдельно.',sel('st-rpos',SET.rpos||'right',[['right','Справа от текста'],['left','Слева от текста'],['top','Сверху']]))+srow('Разрешить удалять основные категории','Основные: Ссылки, Мультфильмы, Трейлеры, Персонажи, Тезисы. Пока выключено, у них вместо крестика замочек: их можно перетаскивать, но нельзя удалить.','<label class="tg"><input type="checkbox" id="st-del"'+(SET.delDef?' checked':'')+'><i></i></label>')+srow('Восстановить категории по умолчанию','Вернёт только недостающие основные категории, остальное не тронет.','<span class="mut" id="rmsg"></span><button class="btn ghost" data-act="restore">Восстановить</button>')+
  secC+secO('marks','Разметка в тексте')+SET.marks.map(m=>'<div class="srow mk"><div class="mkl"><input type="color" data-mk="'+m.id+'" data-mf="color" value="'+m.color+'" title="Цвет"><input data-mk="'+m.id+'" data-mf="name" maxlength="16" value="'+esc(m.name)+'" title="Название, до 16 символов"></div><button class="x" data-mkdel="'+m.id+'" title="Убрать">✕</button></div>').join('')+
@@ -2672,8 +2766,9 @@ document.addEventListener('dblclick',e=>{const t=e.target.closest&&e.target.clos
 (async()=>{try{const th=localStorage.getItem('mo_theme');if(th)applyTheme(th)}catch{}
  document.execCommand('defaultParagraphSeparator',false,'p');
  try{S.scripts=JSON.parse(localStorage.getItem('mo_scripts')||'[]')}catch{}S.scripts.forEach(s=>delete s.file);
- const h=await idbGet('dir');
- if(h){try{if(await h.queryPermission({mode:'readwrite'})==='granted'){S.dir=h;await loadDir()}else S.pending=h}catch{S.pending=h}}
+ if(gcOn()){await 0;GCORE=new GCore(GC.id);S.dir=new GDir(GCORE,'');if(gdOK())await gcConnect(true);else{gcStat();setTimeout(()=>{gcAuto();if(!gdOK())toast('Google Drive: нужно войти. Нажмите на статус внизу слева.')},1500)}}
+ else{const h=await idbGet('dir');
+ if(h){try{if(await h.queryPermission({mode:'readwrite'})==='granted'){S.dir=h;await loadDir()}else S.pending=h}catch{S.pending=h}}}
  S.cur=null;if(!location.hash&&ADM.start&&ADM.start!='home')S.view=ADM.start;hashRestore();render();admAll();status(S.dir?'Готово к работе':'')})();
 /* ===== трекер: книги, слова, заметки ===== */
 let TR={books:[],words:[]},TRS={tab:'books',flt:'all',book:null,bt:'words',q:'',sort:'alpha',imp:false,wedit:null,nedit:null},TRD=null;
