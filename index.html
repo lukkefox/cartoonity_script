@@ -1331,7 +1331,9 @@ html[data-sheet=light] .rsx{color:#8a8f9c}html[data-sheet=light] .rsx:hover{back
 .gdcr{flex:none;flex-wrap:wrap;row-gap:2px;font-size:18px;margin:2px 0 12px;min-width:0}.gdcr .crumb{font-size:18px;white-space:nowrap}.gdcr b{white-space:normal;word-break:break-word}.gdstar{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px}.gdstar.on{color:var(--acc,#8ab4ff)}
 .trside{text-align:center;box-sizing:border-box;width:270px;min-width:0}.trside>*{align-self:center!important;max-width:100%;margin-left:auto;margin-right:auto}.trside .tkcov.big{width:170px;flex:none}.trside .trringw{display:flex;justify-content:center;width:100%}@media(max-width:900px){.trside{width:100%;max-width:340px;justify-self:center}}
 .trk input[type=number]::-webkit-inner-spin-button,.trk input[type=number]::-webkit-outer-spin-button,.trdl input[type=number]::-webkit-inner-spin-button,.trdl input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.trk input[type=number],.trdl input[type=number]{-moz-appearance:textfield;appearance:textfield}.pane .bar.warn>span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#app.nc .trside,#app .trside{padding:36px 22px 34px;align-items:center}
+#app.nc .trside,#app .trside{padding:36px 22px 34px;align-items:center;overflow:visible;scrollbar-gutter:auto}
+
+.trgrid{align-items:start}.tkb{display:block}.tkbi{min-width:0}.tkbi b{word-break:break-word}.tkcov .tkprg{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:center;gap:8px;padding:22px 9px 8px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.78));color:#fff;font-size:12.5px;text-shadow:0 1px 3px rgba(0,0,0,.8);pointer-events:none}.tkcov .tkprg svg{flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
 </style>
 
 
@@ -1542,7 +1544,7 @@ function render(){sqApply();
  $('#fd').textContent=S.dir?'Папка: '+S.dir.name:'Папка не выбрана';if(gcOn())gcStat();
  if(S.view!='settings'&&S.view!='admin')S.lastView=S.view;
  const m=$('#main'),v=(S.view=='settings'||S.view=='admin')?(S.lastView&&S.lastView!='settings'&&S.lastView!='admin'?S.lastView:'home'):S.view,soon=t=>'<section class="card"><h3>'+t[0]+'</h3><p class="mut">'+t[1]+'</p></section>';
- m.classList.toggle('trkm',v=='tracker');m.dataset.trt=SET.trTheme||'emerald';
+ if(SET.trTheme=='hollow')SET.trTheme='emerald';m.classList.toggle('trkm',v=='tracker');m.dataset.trt=SET.trTheme||'emerald';
  if(v=='home'){m.innerHTML=homeHTML();homeMount()}
  else if(v=='scripts'){
   if(S.cur){saved=null;migrateR(S.cur);S.cur.rhtml=relabel(S.cur.rhtml);m.innerHTML='<div class="edview">'+bannerHTML()+editorHTML()+'</div>';edSbw();clean($('#ed'));stats();rposApply();mgApply();rulRender();paginate();rulVRender(true);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(paginate)}
@@ -1865,7 +1867,7 @@ document.addEventListener('keydown',e=>{if(e.key=='Escape'&&$('#si-dz'))mdlRoot(
 /* GDrive: вход через Google, список Диска, открытие документов как сценариев */
 const GDS='https://www.googleapis.com/auth/drive',GDOCX='application/vnd.openxmlformats-officedocument.wordprocessingml.document',GDOC='application/vnd.google-apps.document',GFOLD='application/vnd.google-apps.folder';
 const GD={tok:'',exp:0,path:[{id:'root',name:'Мой диск'}],tab:'my',files:[],busy:false,err:'',q:'',sort:'date',loaded:false};
-const APPVER='08.11.2026 · сборка 15';
+const APPVER='08.11.2026 · сборка 19';
 try{const t=JSON.parse(localStorage.getItem('gd_tok')||'null');if(t&&t.e>Date.now()+30000){GD.tok=t.t;GD.exp=t.e}}catch{}
 const gdOK=()=>!!GD.tok&&GD.exp>Date.now()+15000;
 function gdLoadGis(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.onload=()=>res();sc.onerror=()=>rej(new Error('Не удалось загрузить вход Google: проверьте интернет и доступ к accounts.google.com'));document.head.appendChild(sc)})}
@@ -2831,7 +2833,7 @@ function trHead(){const w=TR.words.length,k=TR.words.filter(x=>x.imp).length,d=T
 function trLib(){const B=[...TR.books].sort((a,b)=>(b.upd||0)-(a.upd||0)),cnt={all:B.length,read:0,done:0,plan:0};B.forEach(b=>cnt[trSt(b)]++);
  const L=TRS.flt=='all'?B:B.filter(b=>trSt(b)==TRS.flt),chip=(k,l)=>'<button class="trchip'+(TRS.flt==k?' on':'')+'" data-tr-flt="'+k+'">'+l+' <i>'+cnt[k]+'</i></button>';
  return '<div class="trtool"><div class="trchips">'+chip('all','Все')+chip('read','Читаю')+chip('done','Прочитано')+chip('plan','В планах')+'</div><button class="trbtn" data-tr-new>＋ Новая книга</button></div>'+
- (L.length?'<div class="trgrid">'+L.map(b=>'<article class="tkb" data-tr-open="'+b.id+'"><div class="tkcov">'+trCov(b)+'</div><div class="tkbi"><b>'+esc(b.title)+'</b>'+(b.author?'<small>'+esc(b.author)+'</small>':'')+'<div class="tkpr">'+trRing(b,40,false)+'<span>'+b.read+' / '+(b.pages||'?')+' стр.</span></div></div></article>').join('')+'</div>':
+ (L.length?'<div class="trgrid">'+L.map(b=>'<article class="tkb" data-tr-open="'+b.id+'"><div class="tkcov">'+trCov(b)+'<div class="tkprg">'+trRing(b,34,false)+'<span>'+b.read+' / '+(b.pages||'?')+' стр.</span></div></div><div class="tkbi"><b>'+esc(b.title)+'</b>'+(b.author?'<small>'+esc(b.author)+'</small>':'')+'</div></article>').join('')+'</div>':
  '<div class="trvoid"><div class="trorn">'+TRORN+'</div><b>'+(B.length?'В этой полке пока пусто':'Здесь будет ваша библиотека')+'</b><p>'+(B.length?'Смените фильтр или добавьте книгу.':'Добавьте первую книгу: название, число страниц и, если хотите, обложку. Потом отмечайте прочитанные страницы, записывайте незнакомые слова и заметки.')+'</p></div>')}
 function trBook(b){const st={plan:'В планах',read:'Читаю',done:'Прочитана'}[trSt(b)];
  const dates=(b.started?'<div>Начата: '+trDay(b.started)+'</div>':'')+(b.finished?'<div>Закончена: '+trDay(b.finished)+'</div>':'');
