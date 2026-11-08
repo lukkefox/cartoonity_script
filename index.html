@@ -811,7 +811,7 @@ select.trin{cursor:pointer}
 .tkb{transition:transform .16s}
 
 .pane.trk{position:relative}
-.trthm{position:relative;z-index:5;width:max-content;margin:0 0 -34px auto;display:flex;gap:6px;padding:5px 7px;border-radius:99px;background:var(--tp);border:1px solid var(--tl);box-shadow:0 2px 10px var(--sh)}
+.trthm{position:relative;z-index:5;width:max-content;margin:0 0 -34px auto;display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:99px;background:var(--tp);border:1px solid var(--tl);box-shadow:0 2px 10px var(--sh)}
 .trsw{width:20px;height:20px;border-radius:50%;border:2px solid transparent;padding:0;cursor:pointer;box-shadow:0 0 0 1px var(--tl);transition:transform .12s}
 .trsw:hover{transform:scale(1.12)}.trsw.on{box-shadow:0 0 0 2px var(--ta)}
 .trsw[data-k=light]{background:linear-gradient(135deg,#f8f8f6 50%,#8c6516 50%)}
@@ -1334,6 +1334,29 @@ html[data-sheet=light] .rsx{color:#8a8f9c}html[data-sheet=light] .rsx:hover{back
 #app.nc .trside,#app .trside{padding:36px 22px 34px;align-items:center;overflow:visible;scrollbar-gutter:auto}
 
 .trgrid{align-items:start}.tkb{display:block}.tkbi{min-width:0}.tkbi b{word-break:break-word}.tkcov .tkprg{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:center;gap:8px;padding:22px 9px 8px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.78));color:#fff;font-size:12.5px;text-shadow:0 1px 3px rgba(0,0,0,.8);pointer-events:none}.tkcov .tkprg svg{flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+
+
+#main.trkm[data-trt=academia],.mdl.trdl[data-trt=academia]{--tb:#0b0f14;--tp:#141c26;--tp2:#1d2835;--tl:#2d3b4b;--tx:#efe3d0;--tm:#a39583;--ta:#d98336;--tr:#e0795a;--sh:rgba(0,0,0,.72);--lat:rgba(217,131,54,.05);font-family:"EB Garamond","Cormorant Garamond","Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif}
+#main.trkm[data-trt=academia]{background:radial-gradient(ellipse 50% 38% at 50% -6%,rgba(235,150,60,.2),transparent 72%),radial-gradient(ellipse 120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.5) 100%),repeating-linear-gradient(45deg,var(--lat) 0 1px,transparent 1px 34px),repeating-linear-gradient(-45deg,var(--lat) 0 1px,transparent 1px 34px),var(--tb) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .6 0 0 0 0 .5 0 0 0 0 .4 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+[data-trt=academia] .trside,[data-trt=academia] .trpaper,.mdl.trdl[data-trt=academia]{background:linear-gradient(165deg,#18222e,#10171f);box-shadow:0 0 0 1px #243140,0 16px 34px -12px var(--sh),inset 0 0 0 4px #141c26,inset 0 0 0 5px color-mix(in srgb,var(--ta) 50%,transparent),inset 0 0 30px rgba(0,0,0,.35)}
+[data-trt=academia] .tkcov{box-shadow:0 0 0 1px #243140,0 0 0 5px #141c26,0 0 0 6px color-mix(in srgb,var(--ta) 65%,transparent),0 12px 20px -8px var(--sh)}
+[data-trt=academia] .tkb:hover .tkcov{box-shadow:0 0 0 1px var(--ta),0 0 0 5px #141c26,0 0 0 6px var(--ta),0 0 24px rgba(217,131,54,.3),0 14px 22px -10px var(--sh)}
+[data-trt=academia] h1,[data-trt=academia] .trtitle{font-variant:small-caps;letter-spacing:.06em;font-weight:600}
+[data-trt=academia] .trauthor,[data-trt=academia] .tkbi small{font-style:italic}
+[data-trt=academia] .trlet{color:var(--ta);font-variant:small-caps;letter-spacing:.08em}
+[data-trt=academia] .trbtn{background:linear-gradient(180deg,#e08f42,#bd6a25);color:#1a0f07;border-color:#8c4d17;text-shadow:0 1px 0 rgba(255,210,150,.35)}
+[data-trt=academia] .trbtn:hover{filter:brightness(1.08)}
+[data-trt=academia] .trin{background:#0c1219;border-color:#2b3a4a}
+[data-trt=academia] .trchip.on{background:var(--ta);color:#1a0f07}
+[data-trt=academia] .trw{background:#18222e}
+.trsw[data-k=academia]{background:linear-gradient(135deg,#141c26 50%,#d98336 50%)}
+.trhw{position:relative;margin:0 0 -78px}.trhero{height:230px;border-radius:14px;background-size:cover;background-position:center;-webkit-mask:linear-gradient(180deg,#000 50%,transparent);mask:linear-gradient(180deg,#000 50%,transparent)}
+.trhw.ed .trhero{cursor:grab;touch-action:none;outline:2px dashed var(--ta);outline-offset:-2px;-webkit-mask:none;mask:none}.trhw.ed .trhero:active{cursor:grabbing}.trha.on{opacity:1}.trhint{position:absolute;left:50%;top:12px;transform:translateX(-50%);padding:5px 14px;border-radius:99px;background:rgba(0,0,0,.6);color:#fff;font-size:12.5px;pointer-events:none}.trhw.ed{margin-bottom:12px}
+.trhw.sm{margin:0 0 6px}.trhw.sm .trhero{height:150px}.trhw.sm .trha{bottom:10px}
+.trha{position:absolute;right:10px;bottom:84px;display:flex;gap:6px;opacity:0;transition:opacity .15s}.trhw:hover .trha{opacity:1}.trha button{border:1px solid var(--tl);background:color-mix(in srgb,var(--tp) 88%,transparent);color:var(--tx);border-radius:99px;padding:5px 12px;font:inherit;font-size:12.5px;cursor:pointer}.trha button:hover{border-color:var(--ta)}
+.trhw~.trbk .trback,.trhw.sm~.trbk .trback{margin-top:4px}.trhw:not(.sm)~.trhd h1{text-shadow:0 2px 14px rgba(0,0,0,.65)}
+.trlay{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--tl);background:transparent;color:var(--tm);cursor:pointer;margin-right:4px;padding:0}.trlay:hover{color:var(--tx);border-color:var(--ta)}
+.tkcov .tkprg{--ta:#f1e6cf;--tl:rgba(255,255,255,.35);--tx:#fff;background:linear-gradient(180deg,transparent,rgba(0,0,0,.6) 38%,rgba(0,0,0,.88));color:#fff}.tkcov .tkprg .trpct{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7)}
 </style>
 
 
@@ -1693,7 +1716,7 @@ document.addEventListener('input',e=>{if(e.target.id=='st-sqph'){SET.sqph=e.targ
 function appearRows(){const th=document.documentElement.dataset.theme=='light'?'light':'dark',sh=SET.sheet||'theme',TT=SET.trTheme||'emerald',b=(a,v,cur,l)=>'<button data-'+a+'="'+v+'"'+(cur==v?' class="on"':'')+'>'+l+'</button>';
  return srow('Цвет акцента','Цвет кнопок и выделений по всему приложению.','<div class="adsw">'+ACP.map(c=>'<button type="button"  data-ad-ac="'+c[0]+'|'+c[1]+'" class="'+((ADM.ac||'')==c[0]?'on':'')+'" style="background:'+(c[0]?'linear-gradient(135deg,'+c[0]+','+c[1]+')':c[3])+'" title="'+c[2]+'"></button>').join('')+'<label class="adcc" title="Свой цвет"><input type="color" id="ad-ac-c" value="'+(ADM.ac||'#4e5058')+'">Свой цвет</label></div>')+
  srow('Тема приложения','Светлая или тёмная. То же делает кнопка внизу слева.','<div class="seg">'+b('thm','light',th,'Светлая')+b('thm','dark',th,'Тёмная')+'</div>')+
- srow('Тема трекера','Своя тема раздела «Трекер»: не зависит от темы приложения.','<div class="seg">'+b('trth','light',TT,'Светлый')+b('trth','dark',TT,'Тёмный')+b('trth','emerald',TT,'Изумруд')+'</div>')+
+ srow('Тема трекера','Своя тема раздела «Трекер»: не зависит от темы приложения.','<div class="seg">'+b('trth','light',TT,'Светлый')+b('trth','dark',TT,'Тёмный')+b('trth','emerald',TT,'Изумруд')+b('trth','academia',TT,'Тёмная академия')+'</div>')+
  srow('Вид листа','Цвет страницы в редакторе и поля исследования: подстраивается под тему или всегда тёмный / светлый.','<div class="seg">'+b('shm','theme',sh,'Как тема')+b('shm','dark',sh,'Тёмный')+b('shm','light',sh,'Светлый')+'</div>')}
 let NGD0=null;
 document.addEventListener('dragstart',e=>{const g=e.target.closest&&e.target.closest('[data-ngdrag]');if(!g)return;NGD0=+g.dataset.ngdrag;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain','ng');e.dataTransfer.setDragImage(g.closest('.ngrow'),20,20)}catch{}g.closest('.ngrow').classList.add('ngdg')});
@@ -1867,7 +1890,7 @@ document.addEventListener('keydown',e=>{if(e.key=='Escape'&&$('#si-dz'))mdlRoot(
 /* GDrive: вход через Google, список Диска, открытие документов как сценариев */
 const GDS='https://www.googleapis.com/auth/drive',GDOCX='application/vnd.openxmlformats-officedocument.wordprocessingml.document',GDOC='application/vnd.google-apps.document',GFOLD='application/vnd.google-apps.folder';
 const GD={tok:'',exp:0,path:[{id:'root',name:'Мой диск'}],tab:'my',files:[],busy:false,err:'',q:'',sort:'date',loaded:false};
-const APPVER='08.11.2026 · сборка 19';
+const APPVER='08.11.2026 · сборка 26';
 try{const t=JSON.parse(localStorage.getItem('gd_tok')||'null');if(t&&t.e>Date.now()+30000){GD.tok=t.t;GD.exp=t.e}}catch{}
 const gdOK=()=>!!GD.tok&&GD.exp>Date.now()+15000;
 function gdLoadGis(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.onload=()=>res();sc.onerror=()=>rej(new Error('Не удалось загрузить вход Google: проверьте интернет и доступ к accounts.google.com'));document.head.appendChild(sc)})}
@@ -2854,9 +2877,15 @@ function trWList(b){let L=TR.words.filter(w=>b?w.book==b.id:true);const q=TRS.q.
  return h}
 function trNotes(b){return '<form class="trnf" data-tr-nform><textarea class="trin" id="tr-nt" rows="3" placeholder="Мысль, цитата, впечатление…"></textarea><div class="trnr"><input class="trin pg" id="tr-np" type="number" min="0" placeholder="Стр." value="'+(b.read||'')+'"><button class="trbtn" type="submit">Добавить заметку</button></div></form>'+
  (b.notes.length?'<div class="trnl">'+[...b.notes].sort((x,y)=>(y.added||0)-(x.added||0)).map(n=>TRS.nedit==n.id?'<div class="trn edit" data-nid="'+n.id+'"><textarea class="trin" id="tre-n" rows="4">'+esc(n.t)+'</textarea><div class="trnr"><button class="trbtn sm" data-tr-nsave>Сохранить</button><button class="trlk" data-tr-ncancel>Отмена</button></div></div>':'<div class="trn" data-nid="'+n.id+'"><div class="trnm">'+(n.page?'<span>стр. '+esc(n.page)+'</span>':'')+'<small>'+trDay(n.added)+'</small><span class="trnb"><button class="trx" data-tr-nedit title="Изменить">✎</button><button class="trx" data-tr-ndel title="Удалить">✕</button></span></div><p>'+esc(n.t).replace(/\n/g,'<br>')+'</p></div>').join('')+'</div>':'<p class="trnone">Заметок пока нет.</p>')}
+function trHg(){if(TR.hero){TR.heroes=TR.heroes||{};TR.heroes[SET.trTheme||'light']=TR.hero;delete TR.hero}return (TR.heroes||{})[SET.trTheme||'light']||''}
+var TRHE=false;
+function trHT(){return SET.trTheme||'light'}
+function trHeroHTML(sm){const H=trHg();if(!H)return '';const y=(TR.heroY||{})[trHT()],ed=TRHE;return '<div class="trhw'+(sm?' sm':'')+(ed?' ed':'')+'"><div class="trhero" style="background-image:url(\''+H+'\');background-position:50% '+(y==null?50:y)+'%"></div>'+(ed?'<div class="trhint">Потяните картинку вверх или вниз</div><div class="trha on"><button data-tr-hero-pos>Готово</button></div>':'<div class="trha"><button data-tr-hero-pos>Сдвинуть</button><button data-tr-hero>Сменить</button><button data-tr-hero-x>Убрать</button></div>')+'</div>'}
+document.addEventListener('pointerdown',e=>{const h=e.target.closest&&e.target.closest('.trhw.ed .trhero');if(!h)return;e.preventDefault();const t=trHT();TR.heroY=TR.heroY||{};const r=(TR.heroR||{})[t]||9/16,bw=h.clientWidth,bh=h.clientHeight,ih=bw*r,rng=Math.max(1,ih-bh),y0=TR.heroY[t]==null?50:TR.heroY[t],sy=e.clientY;h.setPointerCapture&&h.setPointerCapture(e.pointerId);const mv=ev=>{const v=Math.max(0,Math.min(100,y0-(ev.clientY-sy)/rng*100));TR.heroY[t]=v;h.style.backgroundPosition='50% '+v+'%'};const up=()=>{h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);h.removeEventListener('pointercancel',up);saveTR()};h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);h.addEventListener('pointercancel',up)});
+function trHeroPick(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{try{const k=Math.min(1,1700/im.naturalWidth),c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);trHg();const t=trHT();TR.heroes=TR.heroes||{};TR.heroR=TR.heroR||{};TR.heroY=TR.heroY||{};TR.heroes[t]=c.toDataURL('image/jpeg',.8);TR.heroR[t]=c.height/c.width;TR.heroY[t]=50;TRHE=true;saveTR();keepScroll()}catch(e){toast('Не удалось обработать картинку')}};im.onerror=()=>toast('Не удалось открыть картинку');im.src=r.result};r.readAsDataURL(f)};i.click()}
 function trHTML(){const b=TRS.book&&trB(TRS.book);if(TRS.book&&!b)TRS.book=null;
  const TT=SET.trTheme||'emerald',sw=(k,l)=>'<button class="trsw'+(TT==k?' on':'')+'" data-trq="'+k+'" data-k="'+k+'" title="'+l+'" aria-label="'+l+'"></button>';
- return '<div class="pane trk">'+bannerHTML()+'<div class="trthm">'+sw('light','Светлая')+sw('dark','Тёмная')+sw('emerald','Изумруд')+'</div>'+(b?trBook(b):trHead()+(TRS.tab=='words'?'<section class="trpaper">'+trWords(null)+'</section>':trLib()))+'</div>'}
+ return '<div class="pane trk">'+bannerHTML()+'<div class="trthm"><button class="trlay" data-tr-hero title="'+(trHg()?'Сменить шапку':'Добавить шапку для атмосферы')+'" aria-label="Шапка"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg></button>'+sw('light','Светлая')+sw('dark','Тёмная')+sw('emerald','Изумруд')+sw('academia','Тёмная академия')+'</div>'+trHeroHTML(!!b)+(b?trBook(b):trHead()+(TRS.tab=='words'?'<section class="trpaper">'+trWords(null)+'</section>':trLib()))+'</div>'}
 function trSetRead(b,n){n=Math.max(0,Math.round(+n||0));if(b.pages>0&&n>b.pages)n=b.pages;b.read=n;b.upd=Date.now();if(n>0&&!b.started)b.started=Date.now();if(n<=0)b.started=0;if(b.pages>0&&n>=b.pages){if(!b.finished)b.finished=Date.now()}else b.finished=0;saveTR();keepScroll()}
 function trShrink(src){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>{try{const k=Math.min(1,420/im.naturalWidth),c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.85))}catch(e){no(e)}};im.onerror=()=>no(new Error('img'));if(/^https?:/.test(src))im.crossOrigin='anonymous';im.src=src})}
 async function trSearch(q){const out=[],seen=new Set(),add=x=>{const k=((x.title||'')+'|'+(x.author||'')).toLowerCase();if(!x.title||seen.has(k))return;seen.add(k);out.push(x)};
@@ -2890,6 +2919,9 @@ document.addEventListener('click',e=>{if(S.view!='tracker'&&!e.target.closest('.
  if(cl('[data-tr-edit]'))return trDlg(TRS.book);
  const op=cl('[data-tr-open]');if(op){TRS.book=op.dataset.trOpen;TRS.bt='words';TRS.q='';TRS.wedit=TRS.nedit=null;render();const p=$('#main .pane');if(p)p.scrollTop=0;return}
  if(cl('[data-tr-back]')){TRS.book=null;TRS.wedit=TRS.nedit=null;render();return}
+ const hx=cl('[data-tr-hero-x]');if(hx){trHg();delete TR.heroes[trHT()];if(TR.heroY)delete TR.heroY[trHT()];TRHE=false;saveTR();keepScroll();return}
+ const hp=cl('[data-tr-hero-pos]');if(hp){TRHE=!TRHE;keepScroll();return}
+ const hr=cl('[data-tr-hero]');if(hr){trHeroPick();return}
  const tq=cl('[data-trq]');if(tq){SET.trTheme=tq.dataset.trq;saveSettings();keepScroll();return}
  const tb=cl('[data-tr-tab]');if(tb){TRS.tab=tb.dataset.trTab;TRS.q='';TRS.wedit=null;render();return}
  const fl=cl('[data-tr-flt]');if(fl){TRS.flt=fl.dataset.trFlt;keepScroll();return}
