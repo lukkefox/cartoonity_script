@@ -1331,6 +1331,7 @@ html[data-sheet=light] .rsx{color:#8a8f9c}html[data-sheet=light] .rsx:hover{back
 .gdcr{flex:none;flex-wrap:wrap;row-gap:2px;font-size:18px;margin:2px 0 12px;min-width:0}.gdcr .crumb{font-size:18px;white-space:nowrap}.gdcr b{white-space:normal;word-break:break-word}.gdstar{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px}.gdstar.on{color:var(--acc,#8ab4ff)}
 .trside{text-align:center;box-sizing:border-box;width:270px;min-width:0}.trside>*{align-self:center!important;max-width:100%;margin-left:auto;margin-right:auto}.trside .tkcov.big{width:170px;flex:none}.trside .trringw{display:flex;justify-content:center;width:100%}@media(max-width:900px){.trside{width:100%;max-width:340px;justify-self:center}}
 .trk input[type=number]::-webkit-inner-spin-button,.trk input[type=number]::-webkit-outer-spin-button,.trdl input[type=number]::-webkit-inner-spin-button,.trdl input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.trk input[type=number],.trdl input[type=number]{-moz-appearance:textfield;appearance:textfield}.pane .bar.warn>span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#app.nc .trside,#app .trside{padding:36px 22px 34px;align-items:center}
 </style>
 
 
@@ -1864,7 +1865,7 @@ document.addEventListener('keydown',e=>{if(e.key=='Escape'&&$('#si-dz'))mdlRoot(
 /* GDrive: вход через Google, список Диска, открытие документов как сценариев */
 const GDS='https://www.googleapis.com/auth/drive',GDOCX='application/vnd.openxmlformats-officedocument.wordprocessingml.document',GDOC='application/vnd.google-apps.document',GFOLD='application/vnd.google-apps.folder';
 const GD={tok:'',exp:0,path:[{id:'root',name:'Мой диск'}],tab:'my',files:[],busy:false,err:'',q:'',sort:'date',loaded:false};
-const APPVER='07.11.2026 · сборка 14';
+const APPVER='08.11.2026 · сборка 15';
 try{const t=JSON.parse(localStorage.getItem('gd_tok')||'null');if(t&&t.e>Date.now()+30000){GD.tok=t.t;GD.exp=t.e}}catch{}
 const gdOK=()=>!!GD.tok&&GD.exp>Date.now()+15000;
 function gdLoadGis(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.onload=()=>res();sc.onerror=()=>rej(new Error('Не удалось загрузить вход Google: проверьте интернет и доступ к accounts.google.com'));document.head.appendChild(sc)})}
